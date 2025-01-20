@@ -8,59 +8,84 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);  // Estado de carga
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Validación de email
+  const validateEmail = (email) => {
+    const emailRegex = /\S+@\S+\.\S+/;
+    return emailRegex.test(email);
+  };
+
+  // Validación de contraseña (no vacía)
+  const validatePassword = (password) => {
+    return password.length > 0;
+  };
 
   const handleLogin = async () => {
-    setIsLoading(true);  // Iniciar la carga
+    // Validación antes de intentar el login
+    if (!validateEmail(email)) {
+      setError('Por favor, ingresa un email válido.');
+      return;
+    }
+    if (!validatePassword(password)) {
+      setError('La contraseña no puede estar vacía.');
+      return;
+    }
+
+    setError(''); // Limpiar errores anteriores
+    setIsLoading(true); // Mostrar el indicador de carga
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       navigation.replace('Home');
     } catch (error) {
       setError('Error al iniciar sesión: ' + error.message);
     } finally {
-      setIsLoading(false);  // Detener la carga
+      setIsLoading(false); // Detener el indicador de carga
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { fontSize: 24, fontWeight: 'bold' }]}>Mi Comida Favorita</Text>
-      
-      {/* Mostrar el mensaje de error si existe */}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      {/* Formulario de Login */}
-      <Input
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-      />
-      <Input
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      {/* Si está cargando, mostrar el indicador de carga */}
       {isLoading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        // Pantalla de carga
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text style={styles.loadingText}>Iniciando sesión...</Text>
+        </View>
       ) : (
-        <Button
-          title="Iniciar Sesión"
-          onPress={handleLogin}
-          containerStyle={styles.button}
-          disabled={isLoading}  // Deshabilitar el botón durante la carga
-        />
+        // Formulario de inicio de sesión
+        <>
+          <Text style={[styles.title, { fontSize: 24, fontWeight: 'bold' }]}>Mi Comida Favorita</Text>
+          <Input
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            errorMessage={error && !validateEmail(email) ? 'Email inválido' : ''}
+          />
+          <Input
+            placeholder="Contraseña"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            errorMessage={error && !validatePassword(password) ? 'Contraseña requerida' : ''}
+          />
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+          <Button
+            title="Iniciar Sesión"
+            onPress={handleLogin}
+            containerStyle={styles.button}
+            disabled={isLoading} // Deshabilitar botón durante el login
+          />
+          <Button
+            title="Registrarse"
+            type="outline"
+            onPress={() => navigation.navigate('Register')}
+            containerStyle={styles.button}
+          />
+        </>
       )}
-
-      <Button
-        title="Registrarse"
-        type="outline"
-        onPress={() => navigation.navigate('Register')}
-        containerStyle={styles.button}
-      />
     </View>
   );
 }
@@ -82,5 +107,15 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginBottom: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#555',
   },
 });
