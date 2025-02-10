@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import { View, StyleSheet, Text, ActivityIndicator, Image } from 'react-native';
+import { Input, Button, Icon } from 'react-native-elements';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -48,7 +48,7 @@ export default function RegisterScreen({ navigation }) {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      navigation.replace('Home');
+      navigation.replace('Library');
     } catch (error) {
       setError('Error al registrarse: ' + error.message);
     } finally {
@@ -67,6 +67,14 @@ export default function RegisterScreen({ navigation }) {
       ) : (
         // Formulario de registro
         <>
+          {/* Icono de usuario en la parte superior */}
+          <Icon
+            name="user"
+            type="font-awesome"
+            size={150}
+            color="#000"
+            containerStyle={styles.icon}
+          />
           <Text style={[styles.title, { fontSize: 24, fontWeight: 'bold' }]}>Registro</Text>
           <Input
             placeholder="Email"
@@ -97,10 +105,10 @@ export default function RegisterScreen({ navigation }) {
             disabled={isLoading} // Deshabilitar el botón durante el registro
           />
           <Button
-            title="Volver al Login"
-            type="outline"
+            title="¿Ya tienes cuenta? Inicia sesión"
+            type="clear"
             onPress={() => navigation.navigate('Login')}
-            containerStyle={styles.button}
+
           />
         </>
       )}
@@ -111,8 +119,13 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgb(130, 224, 200)',
     padding: 20,
     justifyContent: 'center',
+  },
+  icon: {
+    alignSelf: 'center',
+    marginBottom: 20, // Espacio entre el icono y el título
   },
   title: {
     textAlign: 'center',

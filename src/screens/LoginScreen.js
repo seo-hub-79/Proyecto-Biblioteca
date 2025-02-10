@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator, Image } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }) {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      navigation.replace('Home');
+      navigation.replace('Library');
     } catch (error) {
       setError('Error al iniciar sesión: ' + error.message);
     } finally {
@@ -56,7 +56,13 @@ export default function LoginScreen({ navigation }) {
       ) : (
         // Formulario de inicio de sesión
         <>
-          <Text style={[styles.title, { fontSize: 24, fontWeight: 'bold' }]}>Mi Comida Favorita</Text>
+          {/* Imagen en la parte superior */}
+          <Text style={[styles.title, { fontSize: 24, fontWeight: 'bold' }]}>My Book Review</Text>
+          <Image
+            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/5606/5606108.png' }} 
+            style={styles.image}
+          />
+          <Text style={[styles.title, { fontSize: 24, fontWeight: 'bold' }]}>Iniciar Sesión</Text>
           <Input
             placeholder="Email"
             value={email}
@@ -75,14 +81,14 @@ export default function LoginScreen({ navigation }) {
           <Button
             title="Iniciar Sesión"
             onPress={handleLogin}
-            containerStyle={styles.button}
+            containerStyle={styles.buttonI}
             disabled={isLoading} // Deshabilitar botón durante el login
           />
           <Button
-            title="Registrarse"
-            type="outline"
+            title="¿No tienes cuenta? Regístrate"
+            type="clear"
             onPress={() => navigation.navigate('Register')}
-            containerStyle={styles.button}
+
           />
         </>
       )}
@@ -93,14 +99,21 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgb(130, 224, 200)',
     padding: 20,
     justifyContent: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 200, // Ajusta el tamaño de la imagen según sea necesario
+    resizeMode: 'center',
+    marginBottom: 50, // Espacio entre la imagen y el título
   },
   title: {
     textAlign: 'center',
     marginBottom: 30,
   },
-  button: {
+  buttonI: {
     marginVertical: 10,
   },
   error: {
