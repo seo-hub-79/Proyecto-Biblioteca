@@ -27,7 +27,7 @@ Instalación y configuración
 3. Configurar Firebase
 
     Ir a Firebase Console ( https://console.firebase.google.com/)
-    Crear nuevo proyecto "MiComidaFavorita"
+    Crear nuevo proyecto "my-book-review"
     Habilitar Authentication (Email/Password)
     Crear Cloud Firestore
     Registrar la aplicación web
